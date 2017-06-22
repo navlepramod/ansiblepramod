@@ -1,0 +1,29 @@
+---
+- hosts: web-servers
+#  sudo: yes
+  tasks:
+    - name: install apache2
+      apt: name=apache2 update_cache=yes state=latest
+###########################################################
+    - name: Copying the demo file
+      template: src=/etc/ansible/index.html dest=/var/www/html
+             owner=apache group=apache mode=0644
+###########################################################
+    - name: Install MySQL packages
+      apt: pkg={{item}} state=installed
+      with_items:
+      - bundler
+      - mysql-server*
+      - mysql-client*
+      - libmysqlclient-dev
+      - python-mysqldb
+      - mysql-server
+      - mysql-client
+      - build-essential
+
+  handlers:
+    - name: start apache
+      service: name=httpd state=started
+#handlers:
+#    - name: restart apache2
+#      service: name=apache2 state=restarted
